@@ -1,0 +1,56 @@
+# IMPORTAMOS LAS LIBRERÍAS NECESARIAS
+import pandas as pd  # PARA MANEJAR ESTRUCTURAS DE DATOS COMO DATAFRAMES
+import numpy as np  # PARA REALIZAR OPERACIONES MATEMÁTICAS Y MANIPULAR ARRAYS
+import seaborn as sns  # PARA VISUALIZACIÓN DE DATOS, GENERAR GRÁFICOS COMO HEATMAPS
+import matplotlib.pyplot as plt  # PARA CREAR GRÁFICOS PERSONALIZADOS
+from sklearn.model_selection import train_test_split  # PARA DIVIDIR LOS DATOS EN ENTRENAMIENTO Y PRUEBA
+from sklearn.linear_model import LinearRegression  # PARA CREAR Y ENTRENAR UN MODELO DE REGRESIÓN LINEAL
+from sklearn.metrics import mean_squared_error  # PARA CALCULAR EL ERROR CUADRÁTICO MEDIO (MSE)
+
+# CARGAMOS EL DATASET
+
+url = 'C:/Users/Lenovo/OneDrive/Documentos/1.3 CIENCIA DE DATOS/diabetes.tab.txt'  # DEFINIMOS LA RUTA DEL ARCHIVO CON LOS DATOS
+df = pd.read_csv(url, delimiter='\t')  # LEEMOS LOS DATOS DEL ARCHIVO Y LOS CARGAMOS EN UN DATAFRAME, SEPARADOS POR TABULACIONES
+
+# EXPLORAMOS LOS DATOS
+print(df.head())  # IMPRIMIMOS LAS PRIMERAS 5 FILAS DEL DATAFRAME PARA ENTENDER SU ESTRUCTURA
+
+# DIVIDIMOS LOS DATOS EN VARIABLES INDEPENDIENTES (X) Y LA VARIABLE DEPENDIENTE (Y)
+X = df.drop(columns=['Y'])  # DEFINIMOS X COMO TODAS LAS COLUMNAS EXCEPTO LA VARIABLE OBJETIVO (Y)
+y = df['Y']  # DEFINIMOS Y COMO LA COLUMNA QUE QUEREMOS PREDECIR (VARIABLE DEPENDIENTE)
+
+# DIVIDIMOS EL DATASET EN CONJUNTOS DE ENTRENAMIENTO Y PRUEBA
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)  
+# DIVIDIMOS LOS DATOS EN ENTRENAMIENTO Y PRUEBA, USANDO EL 20% DE LOS DATOS PARA PRUEBAS
+
+# CREAMOS EL MODELO DE REGRESIÓN LINEAL
+model = LinearRegression()  # INICIALIZAMOS UN OBJETO DE REGRESIÓN LINEAL
+
+# ENTRENAMOS EL MODELO
+model.fit(X_train, y_train)  # AJUSTAMOS EL MODELO USANDO LOS DATOS DE ENTRENAMIENTO (X_train, y_train)
+
+# PREDECIMOS EN EL CONJUNTO DE PRUEBA
+y_pred = model.predict(X_test)  # USAMOS EL MODELO ENTRENADO PARA HACER PREDICCIONES SOBRE LOS DATOS DE PRUEBA (X_test)
+
+# MOSTRAMOS LOS COEFICIENTES Y EL ERROR CUADRÁTICO MEDIO (MSE)
+print("Coeficientes del modelo: ", model.coef_)  # IMPRIME LOS COEFICIENTES DEL MODELO
+print("Intercepto del modelo: ", model.intercept_)  # IMPRIME EL INTERCEPTO (VALOR CONSTANTE) DEL MODELO
+print("Error cuadrático medio (MSE): ", mean_squared_error(y_test, y_pred))  # CALCULA Y MUESTRA EL ERROR CUADRÁTICO MEDIO ENTRE LAS PREDICCIONES Y LOS VALORES REALES
+
+# MAPA DE REGRESIÓN LINEAL
+plt.figure(figsize=(10, 6))  # CREA UNA FIGURA PARA EL GRÁFICO CON UN TAMAÑO ESPECÍFICO
+plt.scatter(y_test, y_pred, color='blue')  # DIBUJA LOS PUNTOS EN UN GRÁFICO DE DISPERSIÓN (VALORES REALES VS PREDICCIONES)
+plt.plot([y_test.min(), y_test.max()], [y_test.min(), y_test.max()], 'k--', lw=2, color='red')  
+# DIBUJA UNA LÍNEA ROJA RECTA QUE REPRESENTA LOS VALORES PERFECTAMENTE PREDICHOS (y_test == y_pred)
+plt.xlabel('Valores Reales')  # AÑADE ETIQUETA AL EJE X
+plt.ylabel('Predicciones')  # AÑADE ETIQUETA AL EJE Y
+plt.title('Regresión Lineal: Valores Reales vs. Predicciones')  # AÑADE UN TÍTULO AL GRÁFICO
+plt.show()  # MUESTRA EL GRÁFICO
+
+# HEATMAP PARA VISUALIZAR LA CORRELACIÓN ENTRE LAS VARIABLES
+plt.figure(figsize=(12, 8))  # CREA UNA NUEVA FIGURA PARA EL HEATMAP
+correlation_matrix = df.corr()  # CALCULA LA MATRIZ DE CORRELACIÓN ENTRE TODAS LAS VARIABLES DEL DATAFRAME
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', linewidths=0.5)  
+# DIBUJA EL HEATMAP CON ANOTACIONES NUMÉRICAS (annot=True), UNA PALETA DE COLORES ('coolwarm') Y ESPACIADO ENTRE LAS CELDAS (linewidths=0.5)
+plt.title('Heatmap de correlación entre las variables')  # AÑADE UN TÍTULO AL HEATMAP
+plt.show()  # MUESTRA EL HEATMAP
